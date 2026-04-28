@@ -23,6 +23,7 @@ namespace Student_App_CRUD_
             label3.Text = "Student Age";
             label4.Text = "Student Course";
 
+
             CreateTable();
             LoadData();
         }
