@@ -8,9 +8,6 @@ namespace Student_App_CRUD_
 {
     internal static class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {

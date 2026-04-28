@@ -30,7 +30,7 @@ namespace Student_App_CRUD_
 
         private void CreateTable()
         {
-            string connectionString = "Data Source=students.db;Version=3;";
+            string connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
 
             using (SQLiteConnection con = new SQLiteConnection(connectionString))
             {
@@ -44,7 +44,7 @@ namespace Student_App_CRUD_
 
         private void LoadData()
         {
-            string connectionString = "Data Source=students.db;Version=3;";
+            string connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
 
             using (SQLiteConnection con = new SQLiteConnection(connectionString))
             {
@@ -92,9 +92,29 @@ namespace Student_App_CRUD_
         {
             string connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
 
+            if (string.IsNullOrWhiteSpace(txtId.Text) ||
+               string.IsNullOrWhiteSpace(txtName.Text) ||
+               string.IsNullOrWhiteSpace(txtAge.Text) ||
+               string.IsNullOrWhiteSpace(txtCourse.Text))
+            {
+                MessageBox.Show("All fields are required!");
+                return;
+            }
             using (SQLiteConnection con = new SQLiteConnection(connectionString))
             {
                 con.Open();
+
+                string checkQuery = "SELECT COUNT(*) FROM Students WHERE Id = @Id";
+                SQLiteCommand checkCmd = new SQLiteCommand(checkQuery, con);
+                checkCmd.Parameters.AddWithValue("@Id", txtId.Text);
+
+                long count = (long)checkCmd.ExecuteScalar();
+
+                if (count > 0)
+                {
+                    MessageBox.Show("Student ID already exists!");
+                    return;
+                }
 
                 string query = "INSERT INTO Students (Id, Name, Age, Course) VALUES (@Id, @Name, @Age, @Course)";
 
@@ -119,6 +139,15 @@ namespace Student_App_CRUD_
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtId.Text) ||
+                string.IsNullOrWhiteSpace(txtName.Text) ||
+                string.IsNullOrWhiteSpace(txtAge.Text) ||
+                string.IsNullOrWhiteSpace(txtCourse.Text))
+            {
+                MessageBox.Show("All fields are required!");
+                return;
+            }
+
             string connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString;
 
             using (SQLiteConnection con = new SQLiteConnection(connectionString))
@@ -148,11 +177,29 @@ namespace Student_App_CRUD_
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(txtId.Text))
+            {
+                MessageBox.Show("Enter Student ID to delete!");
+                return;
+            }
+
             string connectionString = ConfigurationManager.ConnectionStrings["Default"].ConnectionString; 
 
             using (SQLiteConnection con = new SQLiteConnection(connectionString))
             {
                 con.Open();
+
+                string checkQuery = "SELECT COUNT(*) FROM Students WHERE Id=@Id";
+                SQLiteCommand checkCmd = new SQLiteCommand(checkQuery, con);
+                checkCmd.Parameters.AddWithValue("@Id", txtId.Text);
+
+                long count = (long)checkCmd.ExecuteScalar();
+
+                if (count == 0)
+                {
+                    MessageBox.Show("Invalid Student ID! No record found.");
+                    return;
+                }
 
                 string query = "DELETE FROM Students WHERE Id=@Id";
 

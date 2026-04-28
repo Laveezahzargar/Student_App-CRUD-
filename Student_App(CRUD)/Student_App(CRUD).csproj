@@ -83,7 +83,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="students.db" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
